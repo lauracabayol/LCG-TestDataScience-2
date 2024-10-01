@@ -4,7 +4,19 @@
     <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
 </a>
 
-This project contains tools for a time series analysis
+This project contains tools for a time series analysis. The analyzed dataset is avalable at the following [link](https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data).
+
+The repository explores two possible algoritms: 
+- Seasonal Autoregressive Integrated Moving-Average (SARIMA)
+- Long-Short-Term-Memory (LSTM)
+
+After some testing, we only deploy the LSTM model.
+
+The project contains two notebooks:
+- EDA.ipynb : Notebook with Exploratory Data Analysis. It shows the main trends of the time series and checks that it is non-stationary.
+- Performance_analysis: Makes predictions with the model deployed with MLFlow and analyzes the performance.
+
+More information about the repository and its usage on [Docs](link_to_docs)
 
 ## Project Organization
 
@@ -13,14 +25,9 @@ This project contains tools for a time series analysis
 ├── Makefile           <- Makefile with convenience commands like `make data` or `make train`
 ├── README.md          <- The top-level README for developers using this project.
 ├── data
-│   ├── external       <- Data from third party sources.
-│   ├── interim        <- Intermediate data that has been transformed.
-│   ├── processed      <- The final, canonical data sets for modeling.
 │   └── raw            <- The original, immutable data dump.
 │
 ├── docs               <- A default mkdocs project; see www.mkdocs.org for details
-│
-├── models             <- Trained and serialized models, model predictions, or model summaries
 │
 ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
 │                         the creator's initials, and a short `-` delimited description, e.g.
@@ -28,9 +35,7 @@ This project contains tools for a time series analysis
 │
 ├── pyproject.toml     <- Project configuration file with package metadata for 
 │                         TimeSeriesAnalysis and configuration for tools like black
-│
-├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-│
+││
 ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
 │   └── figures        <- Generated graphics and figures to be used in reporting
 │
@@ -54,8 +59,7 @@ This project contains tools for a time series analysis
     │   ├── predict.py          <- Code to run model inference with trained models          
     │   └── train.py            <- Code to train models
     │
-    └── plots.py                <- Code to create visualizations
+    └── utils.py                <- Code to metrics and other interesting functions 
 ```
 
---------
 
