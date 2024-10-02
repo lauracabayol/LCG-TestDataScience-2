@@ -10,13 +10,51 @@ The repository explores two possible algoritms:
 - Seasonal Autoregressive Integrated Moving-Average (SARIMA)
 - Long-Short-Term-Memory (LSTM)
 
-After some testing, we only deploy the LSTM model.
+After testing, the LSTM model was selected as the best performer and has been deployed for production.
 
-The project contains two notebooks:
-- EDA.ipynb : Notebook with Exploratory Data Analysis. It shows the main trends of the time series and checks that it is non-stationary.
-- Performance_analysis: Makes predictions with the model deployed with MLFlow and analyzes the performance.
+## Installation
 
-More information about the repository and its usage on [Docs](link_to_docs)
+#### Installation and Environment Setup
+We recommend using a virtual environment to install the project dependencies and maintain an isolated workspace.
+#### Setting Up a Virtual Environment:
+To create a virtual environment using <venv>, run the following commands:
+```bash
+python -m venv venv
+source venv/bin/activate   # On macOS/Linux
+```
+### 2. Setting Up a Conda Environment:
+Alternatively, you can create a Conda environment with Python 3.10 by executing the following commands:
+```
+conda create -n TempForecast -c conda-forge python=3.10
+conda activate TempForecast
+```
+The required python modules are in the <requirements.txt> file.
+
+You will also need to clone the repository to your local environment by executing the following commands:
+
+```bash
+git clone https://github.com/lauracabayol/TEMPERATURE_FORECAST
+cd TEMPERATURE_FORECAST
+```
+and then install it.
+
+```
+pip install .
+``` 
+
+## Deployed model
+For convenience, we have created a Docker container that includes the best-performing model along with all necessary dependencies. One can build the Docker image in the root directory 
+```bash
+docker build -t temperature-forecasting:latest .
+```
+And then initialize a notebook that enables to make predictions with
+```
+docker run -p 9999:9999 temperature-forecasting:latest
+```
+To access a jupyter notebook to make predictions with the deployed model, open your browser at:
+```
+http://localhost:9999
+```
 
 ## Project Organization
 
