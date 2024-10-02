@@ -49,10 +49,6 @@ def main(
     if model_type == "SARIMA":
         logger.error(f"Not supported as of today")
         return
-        model = mlflow.pyfunc.load_model(model_uri)
-        forecast = model.predict(steps=100)
-        forecast_df = forecast.summary_frame()
-        forecast_values = forecast_df.loc[:, 'mean'].values
 
     elif model_type == "LSTM":
         deployed_model = mlflow.pytorch.load_model(model_uri)
