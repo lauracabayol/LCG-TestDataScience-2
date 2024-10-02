@@ -16,7 +16,7 @@ After testing, the LSTM model was selected as the best performer and has been de
 
 ## Installation
 
-#### Installation and Environment Setup
+### Installation and Environment Setup
 We recommend using a virtual environment to install the project dependencies and maintain an isolated workspace.
 #### Setting Up a Virtual Environment:
 To create a virtual environment using <venv>, run the following commands:
@@ -24,7 +24,7 @@ To create a virtual environment using <venv>, run the following commands:
 python -m venv venv
 source venv/bin/activate   
 ```
-### 2. Setting Up a Conda Environment:
+#### Setting Up a Conda Environment:
 Alternatively, you can create a Conda environment with Python 3.10 by executing the following commands:
 ```
 conda create -n TempForecast -c conda-forge python=3.10
