@@ -37,7 +37,8 @@ dependencies = [
     "matplotlib==3.9.2",
     "jupytext==1.16.4",
     "jupyter==1.1.1",
-    "loguru==0.7.2"
+    "loguru==0.7.2",
+    "statsmodels==0.14.3"
 ]
 
 [tool.black]
