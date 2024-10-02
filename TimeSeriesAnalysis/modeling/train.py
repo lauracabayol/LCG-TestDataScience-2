@@ -1,18 +1,18 @@
 import typer
+import numpy as np
 import pandas as pd
 import mlflow
 import mlflow.pyfunc
 import mlflow.pytorch
 
-from TimeSeriesAnalysis.forecast_model import TimeSeriesForecast
-from TimeSeriesAnalysis.config import RAW_DATA_DIR, MODELS_DIR
-from TimeSeriesAnalysis.features import feature_engineering
-
 from sklearn.metrics import mean_absolute_error
-import numpy as np
 from pathlib import Path
 from loguru import logger
-import pickle
+
+from TimeSeriesAnalysis.forecast_model import TimeSeriesForecast
+from TimeSeriesAnalysis.config import RAW_DATA_DIR
+from TimeSeriesAnalysis.features import feature_engineering
+
 
 # Set the tracking URI for MLflow
 mlflow.set_tracking_uri("http://127.0.0.1:5000")

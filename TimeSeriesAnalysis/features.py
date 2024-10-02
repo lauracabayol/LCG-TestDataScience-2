@@ -4,12 +4,11 @@ from loguru import logger
 
 
 def feature_engineering(
-    df: pd.DataFrame, verbose: bool = True, model_type="SARIMA"
+    df: pd.DataFrame, model_type="LSTM"
 ) -> pd.DataFrame:
     """Performs feature engineering on the tran and test datasets."""
 
-    if verbose:
-        logger.info("Starting feature engineering...")
+    logger.info("Starting feature engineering...")
 
     # dt format
     df["dt"] = pd.to_datetime(df["dt"], format="%Y-%m-%d")

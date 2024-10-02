@@ -6,7 +6,7 @@
 
 This project contains tools for a time series analysis. The analyzed dataset is avalable at the following [link](https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data).
 
-The repository doumentation can be found [here](https://lauracabayol.github.io/TEMPERATURE_FORECAST/).
+The repository doumentation can be found [here](https://lauracabayol.github.io/LCG-TestDataScience-2/).
 
 The repository explores two possible algoritms: 
 - Seasonal Autoregressive Integrated Moving-Average (SARIMA)
