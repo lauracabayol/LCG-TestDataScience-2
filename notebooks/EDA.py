@@ -14,83 +14,102 @@
 
 # # EDA FOR CLIMATE DATA
 
+# This notebook analyzes a time-series dataset available [here](https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data)
+
+# The dataset corresponds to the temberature evolution over time from 1768 to 2013 in different countries.
+
+# In this exploratory analysis, we will: 
+# - Look at the data, select it and preprocess it.
+# - Study the time series, check if it is stationary
+# - Make several plots to have initial notions on trends and seasonality.
+
+# ## IMPORT PYTHON MODULES
+
+# +
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+from scipy import stats
 
-# ## OPEN DATA (https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/data)
+import matplotlib.pyplot as plt
+# Set global settings for all plots
+plt.rcParams['font.size'] = 18
+plt.rcParams['font.family'] = 'serif'
+from TimeSeriesAnalysis.config import FIGURES_DIR 
+# -
+
+# ## OPEN DATA 
 
 df_temperatures = pd.read_csv('../data/raw/climate_data/GlobalLandTemperaturesByCountry.csv')
 
-# ## CHECK THAT THE TIME SERIES ARE NOT STACIONARY
+# The list of countries are:
 
-# #### PREPARE DATA
+df_temperatures.Country.unique()
 
-# For this, we select data from a single country (for simplicity) and assume that the properties of the series are the same for all
+# Due to variations in temperature trends across different countries and the inability to incorporate regressor variables (e.g., adding country-specific conditions during training), we will restrict our analysis to data from a single country, which will be the United States.
 
-country_data = df_temperatures[df_temperatures['Country'] == 'United States']
+# data selection
+df_temperatures = df_temperatures[df_temperatures['Country'] == 'United States']
 
-# +
 # Convert date to datetime format
-country_data['dt'] = pd.to_datetime(country_data['dt'], format='%Y-%m-%d')
+df_temperatures['dt'] = pd.to_datetime(df_temperatures['dt'], format='%Y-%m-%d')
 
-# Find the earliest date
-earliest_date = country_data['dt'].min()
-
+# Convert dates into a counting from the earliest register to the latests in days 
+earliest_date = df_temperatures['dt'].min()
 # Calculate the difference in days from the earliest date
-country_data['days_since_earliest'] = (country_data['dt'] - earliest_date).dt.days
+df_temperatures['days_since_earliest'] = (df_temperatures.loc[:,'dt'] - earliest_date).dt.days
 
-# -
+# ## DATA VISUALIZATION
 
-# #### PLOT DATA
+# #### Plot 1: Plot AverageTemperature over time
 
-# The plot below shows all data records in the dataset for the United States. We note that we cannot see anything, the visualization is very poor.
+# The plot below illustrates the historical evolution of average temperature in the United States, based on all available data points. Due to the density and high volume of data, the visualization appears cluttered, making it difficult to discern trends.
 
 # Plot AverageTemperature over time
 plt.figure(figsize=(10, 6))
-plt.plot(country_data['days_since_earliest'], country_data['AverageTemperature'], label='Average Temperature')
+plt.plot(df_temperatures['days_since_earliest'], df_temperatures['AverageTemperature'], color = 'steelblue', alpha=0.7)
 plt.title('Average Temperature Over Time (United States)')
-plt.xlabel('Year')
+plt.xlabel('Time')
 plt.ylabel('Temperature')
-plt.legend()
+plt.savefig(FIGURES_DIR / 'AvTemp_allTime.png', bbox_inches='tight')
 plt.show()
 
-# #### PLOT DATA IN SEVERAL YEARS
+
+# #### Plot 2: Temperature evolution over a year (for several years)
+
+# The plot reveals a clear trend in temperature evolution over the course of a year. The pattern follows what we would expect for a country located in the Northern Hemisphere: temperatures are lowest in January, rise steadily to their peak in June and July, and then cyclically descend towards the end of the year.
 
 # Extract year and month from the date column
-country_data.loc[:,'year']= country_data.loc[:,'dt'].dt.year
-country_data.loc[:,'month'] = country_data.loc[:,'dt'].dt.month
+df_temperatures.loc[:,'year']= df_temperatures.loc[:,'dt'].dt.year
+df_temperatures.loc[:,'month'] = df_temperatures.loc[:,'dt'].dt.month
 
 # +
-# Create a single figure for all the plots
 plt.figure(figsize=(10, 5))
 
-# Plot 1: Evolution in one year (e.g., year 1900, 1950, 2000, 2010)
 years_of_interest = [1900, 1950, 2000, 2010]
 for year in years_of_interest:
-    df_one_year = country_data[country_data['year'] == year]
+    df_one_year = df_temperatures[df_temperatures['year'] == year]
 
-    # Find the earliest date
+    # Redifine the earliest date for the dataframe containing only one year
     earliest_date = df_one_year.loc[:,'dt'].min()
     # Calculate the difference in days from the earliest date
     df_one_year.loc[:,'days_since_earliest'] = (df_one_year.loc[:,'dt'] - earliest_date).dt.days
-
-
     plt.plot(df_one_year['days_since_earliest'], df_one_year['AverageTemperature'], label=f'Temperature in {year}')
 
 # Set plot titles, labels, and legends
 plt.title('Temperature Evolution in Different Years')
-plt.xlabel('Date')
+plt.xlabel('Time')
 plt.ylabel('Average Temperature')
 plt.legend()
 plt.grid(True)
 
-# Show the final combined plot
+plt.savefig(FIGURES_DIR / 'AvTemp_Yearly.png', bbox_inches='tight')
 plt.show()
 
 # -
 
-# #### PLOT FIVE CONSECUTIVE YEARS
+# #### Plot 3: Temperature evolution over five year
+
+# The plot below shows that over years, the trend is cyclicly repeated (as expected)
 
 # +
 # Create a single figure for all the plots
@@ -98,11 +117,10 @@ plt.figure(figsize=(10, 5))
 
 # Plot 1: Evolution in one year (e.g., year 1900, 1950, 2000, 2010)
 years_of_interest = np.arange(2000,2005,1)
-earliest_date = country_data[country_data['year'] == years_of_interest.min()].loc[:,'dt'].min()
+earliest_date = df_temperatures[df_temperatures['year'] == years_of_interest.min()].loc[:,'dt'].min()
 
 for year in years_of_interest:
-    df_one_year = country_data[country_data['year'] == year]
-    # Calculate the difference in days from the earliest date
+    df_one_year = df_temperatures[df_temperatures['year'] == year]
     df_one_year.loc[:,'days_since_earliest'] = (df_one_year.loc[:,'dt'] - earliest_date).dt.days
 
 
@@ -114,56 +132,47 @@ plt.xlabel('Date')
 plt.ylabel('Average Temperature')
 plt.legend()
 plt.grid(True)
-
-# Show the final combined plot
+plt.savefig(FIGURES_DIR / 'AvTemp_5Years.png', bbox_inches='tight')
 plt.show()
 
 # -
 
-# #### PLOT DATA EVOLUTION OVER YEARS
+# #### Plot 4: Temperature evolution over years 
 #
 
-# +
-# Plot 2: Evolution Over Years Averaging All Entries Per Year
-df_yearly_avg = country_data.groupby('year').agg({'AverageTemperature': 'mean'}).reset_index()
+# The plot aims to reveal any underlying trend in average temperatures over the years. At first glance, we can observe an upward trajectory, which is further confirmed by the linear fit. This clear increase in temperature aligns with the effects of global warming, reflecting a consistent warming trend over time. 
 
+# +
+from scipy import stats
+
+# Compute yearly average temperatures
+df_yearly_avg = df_temperatures.groupby('year').agg({'AverageTemperature': 'mean'}).reset_index()
+
+# Fit a linear regression to the yearly average temperature data
+slope, intercept, r_value, p_value, std_err = stats.linregress(df_yearly_avg.dropna()['year'], df_yearly_avg.dropna()['AverageTemperature'].values)
+
+# Predicted values for the trend line
+trendline = intercept + slope * df_yearly_avg['year']
+
+# Plot the yearly average temperatures and the trendline
 plt.figure(figsize=(10, 5))
-plt.plot(df_yearly_avg['year'], df_yearly_avg['AverageTemperature'], color = 'crimson')
-plt.title('Yearly Average Temperature Evolution')
+plt.plot(df_yearly_avg['year'], df_yearly_avg['AverageTemperature'], color='crimson', label='Average Temperature')
+plt.plot(df_yearly_avg['year'], trendline, linestyle='--', label=f'linear fit (slope={slope:.4f})', color = 'navy')
+
+# Add title, labels, and grid
 plt.xlabel('Year')
 plt.ylabel('Average Temperature')
 plt.grid(True)
+
+# Add legend
+plt.legend()
+
+# Save and display the plot
+plt.savefig(FIGURES_DIR / 'AvTemp_allYears_with_trendline.png', bbox_inches='tight')
 plt.show()
 
 # -
 
-# From the previus plots, we can clearly see that the data is non-stationary, and that it has both a trend and a seasonsable companent
-
-# Stationarity refers to the property of a time series where the statistical properties such as mean and variance. From the previous plots, we can claerly see that the mean temperature is not constant over time. As expected, it ciclely increases and derases again in correspondance with the time/weather seasons. 
-
-# ### Let's check numerically that the time series is not stationary: Augmented Dickey-Fuller (ADF) test
-
-# Unit root test is a statistical method used to determine if a time series is stationary or not.
-
-# A unit root is a condition in a time series where the root of the characteristic equation is equal to 1, indicating that the time series is non-stationary. Mathematically the unit root test can be represented as 
-
-# Y_{t} = a·Y_{t-1} + b · X_e + epsilon 
-
-from statsmodels.tsa.stattools import adfuller
-
-# +
-# Perform the ADF test
-result = adfuller(country_data['AverageTemperature'].dropna())
-
-# Output the results
-print('p-value:', result[1])
-
-# Interpretation
-if result[1] > 0.05:
-    print("The time series is likely non-stationary (p-value > 0.05)")
-else:
-    print("The time series is likely stationary (p-value <= 0.05)")
-
-# -
+# Stationarity refers to the property of a time series where the statistical properties such as mean and variance. From the previous plots, we can claerly see that the mean temperature is not constant over time. As expected, it ciclely increases and decrases again in correspondance with the time/weather seasons. Furthermore, there is a warming trend over years due to global warming.
 
 
