@@ -36,10 +36,10 @@ def main(
             temp_series = feature_engineering(df, model_type="LSTM")
 
             logger.info("Training LSTM model...")
-            time_seires_model = TimeSeriesForecast(data=temp_series.values, model_type="LSTM")
-            lstm_model = time_seires_model.train()
+            time_seires_model = TimeSeriesForecast(model_type="LSTM")
+            lstm_model = time_seires_model.train(data=temp_series.values)
             logger.success("LSTM model trained successfully.")
-            forecast_values = time_seires_model.predict()
+            forecast_values = time_seires_model.predict(data=temp_series.values)
             logger.info("Forecast complete.")
 
             # Log the LSTM model using MLflow's PyTorch support
@@ -59,14 +59,12 @@ def main(
             # Train SARIMA model
             temp_series = feature_engineering(df)
             logger.info("Training SARIMA model...")
-            time_seires_model = TimeSeriesForecast(data=temp_series.values, model_type="SARIMA")
-            sarima_result = time_seires_model.train()
+            time_seires_model = TimeSeriesForecast(model_type="SARIMA")
+            sarima_result = time_seires_model.train(data=temp_series.values)
             logger.success("SARIMA model trained successfully.")
-            with open(MODELS_DIR / f"model_{model_type}.pkl", "wb") as f:
-                pickle.dump(sarima_result, f)
 
             # Forecast 100 time steps ahead
-            forecast = time_seires_model.predict()
+            forecast = time_seires_model.predict(data=temp_series.values)
             forecast_values = forecast.loc[:, "mean"].values
             logger.info("Forecast complete.")
 

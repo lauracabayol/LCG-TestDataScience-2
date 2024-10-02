@@ -21,7 +21,7 @@ def main(
     train_data_path: Path = RAW_DATA_DIR / "climate_data/GlobalLandTemperatures_US_train.csv",
     model_name: str = "TEMPERATURE_FORECAST",
     model_version: int = 4,
-    model_type: str = "SARIMA",
+    model_type: str = "LSTM",
     future_steps: int = 100,
     # -----------------------------------------
 ):
@@ -49,17 +49,13 @@ def main(
     if model_type == "SARIMA":
         logger.error(f"Not supported as of today")
         return
-        """model = mlflow.pyfunc.load_model(model_uri)
-        forecast = model.predict()
-        forecast_df = forecast.summary_frame()
-        forecast_values = forecast_df.loc[:, 'mean'].values"""
 
     elif model_type == "LSTM":
         deployed_model = mlflow.pytorch.load_model(model_uri)
-        model = TimeSeriesForecast(data=temp_series.values, model_type=model_type)
+        model = TimeSeriesForecast(model_type=model_type)
 
         model.load_model(deployed_model)
-        forecast_values = model.predict(future_steps=future_steps)
+        forecast_values = model.predict(data=temp_series.values, future_steps=future_steps)
 
     logger.info("Forecast complete.")
 
