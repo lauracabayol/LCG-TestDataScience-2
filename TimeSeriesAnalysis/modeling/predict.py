@@ -1,15 +1,14 @@
-from TimeSeriesAnalysis.config import MODELS_DIR, RAW_DATA_DIR, PREDICTED_DATA_DIR
-from TimeSeriesAnalysis.features import feature_engineering
-from TimeSeriesAnalysis.forecast_model import TimeSeriesForecast
-
+import pandas as pd
+import numpy as np
 from tqdm import tqdm
 from loguru import logger
 from pathlib import Path
 import typer
-import pandas as pd
-import numpy as np
-import mlflow
-import mlflow.sklearn
+import mlflow 
+
+from TimeSeriesAnalysis.config import RAW_DATA_DIR
+from TimeSeriesAnalysis.features import feature_engineering
+from TimeSeriesAnalysis.forecast_model import TimeSeriesForecast
 
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 app = typer.Typer()
