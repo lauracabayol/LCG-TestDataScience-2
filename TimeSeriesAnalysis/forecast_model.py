@@ -12,7 +12,7 @@ import numpy as np
 
 
 class TimeSeriesForecast(mlflow.pyfunc.PythonModel):
-    def __init__(self, data, model_type: str = "SARIMA"):
+    def __init__(self,model_type: str = "LSTM"):
         """Initialize the classifier based on the selected model type.
 
         Parameters:
@@ -20,29 +20,30 @@ class TimeSeriesForecast(mlflow.pyfunc.PythonModel):
         """
 
         self.model_type = model_type
-        self.order = (
-            MODEL_PARAMS_SARIMA.get("p"),
-            MODEL_PARAMS_SARIMA.get("d"),
-            MODEL_PARAMS_SARIMA.get("q"),
-        )
-        self.seasonal_order = (
-            MODEL_PARAMS_SARIMA.get("P"),
-            MODEL_PARAMS_SARIMA.get("D"),
-            MODEL_PARAMS_SARIMA.get("Q"),
-            MODEL_PARAMS_SARIMA.get("s"),
-        )
-        self.time_step = MODEL_PARAMS_LSTM["time_step"]
-        self.data = data
-
-        if model_type == "SARIMA":
-            self.model = SARIMAX(data, order=self.order, seasonable_order=self.seasonal_order)
-
-        elif model_type == "LSTM":
+        if self.model_type == 'SARIMA':
+            self.order = (
+                MODEL_PARAMS_SARIMA.get("p"),
+                MODEL_PARAMS_SARIMA.get("d"),
+                MODEL_PARAMS_SARIMA.get("q"),
+            )
+            self.seasonal_order = (
+                MODEL_PARAMS_SARIMA.get("P"),
+                MODEL_PARAMS_SARIMA.get("D"),
+                MODEL_PARAMS_SARIMA.get("Q"),
+                MODEL_PARAMS_SARIMA.get("s"),
+            )
+        
+        elif model_type != "LSTM":
+            logger.error(f"Model type {model_type} not recognized. Defaulting to LSTM.")
+            model_type = "LSTM"
+        
+        if model_type == "LSTM":
             # hyperparameters
             input_size = MODEL_PARAMS_LSTM["input_size"]  # One feature: 'AverageTemperature'
             self.hidden_size = MODEL_PARAMS_LSTM["hidden_size"]  # Number of LSTM units
             self.num_layers = MODEL_PARAMS_LSTM["num_layers"]  # Number of LSTM layers
             output_size = MODEL_PARAMS_LSTM["output_size"]
+            self.time_step = MODEL_PARAMS_LSTM["time_step"]
             self.model = LSTMModel(
                 input_size=input_size,
                 hidden_size=self.hidden_size,
@@ -50,28 +51,25 @@ class TimeSeriesForecast(mlflow.pyfunc.PythonModel):
                 output_size=output_size,
             )
 
-        else:
-            logger.error(f"Model type {model_type} not recognized. Defaulting to SARIMA.")
-            self.model = SARIMAX(data, order=self.order, seasonable_order=self.seasonal_order)
-        logger.info(f"{model_type} forecast initialized.")
-
     def load_model(self, model):
         """Load the trained model."""
         self.model = model
 
-    def train(self):
+    def train(self, data):
         """Train the model on the given training data."""
+        self.data = data
         if self.model_type == "SARIMA":
             logger.info("Training SARIMA for time series forecast...")
+            self.model = SARIMAX(data, order=self.order, seasonable_order=self.seasonal_order)
             self.sarima_result = self.model.fit()
             logger.success("Model training complete.")
+            
             return self.sarima_result
         elif self.model_type == "LSTM":
             logger.info("Training LSTM for time series forecast...")
-
             batch_size = MODEL_PARAMS_LSTM["batch_size"]
             # Initialize the dataset
-            dataset = TimeSeriesDataset(self.data, self.time_step)
+            dataset = TimeSeriesDataset(data, self.time_step)
             # Create DataLoader for batch training
             train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
@@ -113,7 +111,7 @@ class TimeSeriesForecast(mlflow.pyfunc.PythonModel):
 
             return self.model
 
-    def predict(self, future_steps=100):
+    def predict(self, data, future_steps=100):
         """Make predictions for the given future steps."""
         # Use future_steps from the input
         logger.info(f"Making predictions for {future_steps} future steps...")
@@ -121,13 +119,14 @@ class TimeSeriesForecast(mlflow.pyfunc.PythonModel):
             logger.info("Making predictions on the test data with SARIMA...")
             forecast = self.sarima_result.get_forecast(steps=future_steps)
             forecast_df = forecast.summary_frame()
+            
             return forecast_df
         elif self.model_type == "LSTM":
             self.model.eval()
             # Prepare last known data for future prediction
 
             last_known_data = torch.Tensor(
-                self.data[-self.time_step :].reshape((1, self.time_step, 1))
+                data[-self.time_step :].reshape((1, self.time_step, 1))
             )
 
             # Forecast future steps
