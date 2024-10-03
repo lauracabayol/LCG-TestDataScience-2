@@ -21,8 +21,8 @@ Before proceeding, ensure that the following software is installed on your syste
 You will also need to clone the repository to your local environment by executing the following commands:
 
 ```bash
-git clone https://github.com/lauracabayol/TEMPERATURE_FORECAST
-cd TEMPERATURE_FORECAST
+git clone https://github.com/lauracabayol/LCG-TestDataScience-2.git
+cd LCG-TestDataScience-2
 ```
 ## Installation
 
@@ -32,7 +32,7 @@ We recommend using a virtual environment to install the project dependencies and
 To create a virtual environment using <venv>, run the following commands:
 ```bash
 python -m venv venv
-source venv/bin/activate   # On macOS/Linux
+source venv/bin/activate  
 ```
 ### 2. Setting Up a Conda Environment:
 Alternatively, you can create a Conda environment with Python 3.10 by executing the following commands:
@@ -45,7 +45,7 @@ The required python modules are in the <requirements.txt> file.
 Once your environment is ready, proceed with the installation of the package:
 
 ```
-pip install .
+pip install -e .
 ``` 
 #### Optional: Configuring MLflow
 For advanced users interested in tracking experiments and using MLflow, please follow the official MLflow setup  [guide](https://mlflow.org/docs/latest/getting-started/index.html) to configure the tracking server.
