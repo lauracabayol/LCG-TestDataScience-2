@@ -35,13 +35,13 @@ The required python modules are in the <requirements.txt> file.
 You will also need to clone the repository to your local environment by executing the following commands:
 
 ```bash
-git clone https://github.com/lauracabayol/TEMPERATURE_FORECAST
-cd TEMPERATURE_FORECAST
+git https://github.com/lauracabayol/LCG-TestDataScience-2.git
+cd LCG-TestDataScience-2
 ```
 and then install it.
 
 ```
-pip install .
+pip install -e .
 ``` 
 
 ## Deployed model
@@ -79,10 +79,6 @@ http://localhost:9999
 ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
 │   └── figures        <- Generated graphics and figures to be used in reporting
 │
-├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-│                         generated with `pip freeze > requirements.txt`
-│
-├── setup.cfg          <- Configuration file for flake8
 │
 └── TimeSeriesAnalysis   <- Source code for use in this project.
     │

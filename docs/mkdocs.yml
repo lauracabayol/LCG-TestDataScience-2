@@ -7,7 +7,7 @@ nav:
   - Home: index.md
   
 # Define the URL where the site will be deployed
-site_url: https://github.com/lauracabayol/TEMPERATURE_FORECAST/
+site_url: https://github.com/lauracabayol/LCG-TestDataScience-2
 
 # Optional: Add some Markdown extensions (e.g., for syntax highlighting)
 markdown_extensions:
