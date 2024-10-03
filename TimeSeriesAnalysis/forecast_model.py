@@ -79,7 +79,10 @@ class TimeSeriesForecast(mlflow.pyfunc.PythonModel):
             learning_rate = MODEL_PARAMS_LSTM["learning_rate"]
             # Loss and optimizer
             criterion = nn.MSELoss()
-            optimizer = torch.optim.Adam(self.model.parameters(), lr=learning_rate)
+            optimizer = torch.optim.Adam(self.model.parameters(), 
+                                         lr=0.001, 
+                                         weight_decay=1e-5)
+
 
             # Training loop
             self.model.train()
@@ -125,7 +128,6 @@ class TimeSeriesForecast(mlflow.pyfunc.PythonModel):
         elif self.model_type == "LSTM":
             self.model.eval()
             # Prepare last known data for future prediction
-
             last_known_data = torch.Tensor(data[-self.time_step :].reshape((1, self.time_step, 1)))
 
             # Forecast future steps
@@ -135,7 +137,11 @@ class TimeSeriesForecast(mlflow.pyfunc.PythonModel):
                     pred = self.model(last_known_data)
                     predictions.append(pred.item())
                     # Append the prediction to the input and remove the oldest value
+                    #last_known_data = torch.cat(
+                    #    (last_known_data[:, 1:, :], pred.unsqueeze(0)), dim=1
+                    #)
                     last_known_data = torch.cat(
                         (last_known_data[:, 1:, :], pred.unsqueeze(0)), dim=1
                     )
+
             return np.array(predictions)

@@ -29,7 +29,7 @@ MODEL_PARAMS_SARIMA = {
 
 MODEL_PARAMS_LSTM = {
     "batch_size": 64,
-    "time_step": 500,
+    "time_step": 48,
     "input_size": 1,
     "hidden_size": 100,  # Number of LSTM units
     "num_layers": 2,  # Number of LSTM layers

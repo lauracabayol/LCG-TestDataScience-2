@@ -118,6 +118,8 @@ This will start a Jupyter notebook where you can interact with the pre-trained b
 ```bash
 http://localhost:9999
 ```
+**The access token is 12345**
+
 The notebook is pre-configured to load and run the best model, so you can use it without needing to access MLflow.
 
 ## License

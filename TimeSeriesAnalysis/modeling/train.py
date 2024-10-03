@@ -18,12 +18,11 @@ from TimeSeriesAnalysis.features import feature_engineering
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 app = typer.Typer()
 
-
 @app.command()
 def main(
     training_data_path: Path = RAW_DATA_DIR / "climate_data/GlobalLandTemperatures_US_train.csv",
     testing_data_path: Path = RAW_DATA_DIR / "climate_data/GlobalLandTemperatures_US_test.csv",
-    model_type: str = "SARIMA",
+    model_type: str = "LSTM",
 ):
     # Start a single MLflow run
     with mlflow.start_run():
@@ -36,10 +35,10 @@ def main(
             temp_series = feature_engineering(df, model_type="LSTM")
 
             logger.info("Training LSTM model...")
-            time_seires_model = TimeSeriesForecast(model_type="LSTM")
-            lstm_model = time_seires_model.train(data=temp_series.values)
+            time_series_model = TimeSeriesForecast(model_type="LSTM")
+            lstm_model = time_series_model.train(data=temp_series.values)
             logger.success("LSTM model trained successfully.")
-            forecast_values = time_seires_model.predict(data=temp_series.values)
+            forecast_values = time_series_model.predict(data=temp_series.values)
             logger.info("Forecast complete.")
 
             # Log the LSTM model using MLflow's PyTorch support
@@ -50,33 +49,33 @@ def main(
             )
 
             # Logging LSTM-specific parameters
-            mlflow.log_param("time_step", time_seires_model.time_step)
+            mlflow.log_param("time_step", time_series_model.time_step)
             mlflow.log_param("model_type", model_type)
-            mlflow.log_param("hidden_size", time_seires_model.hidden_size)
-            mlflow.log_param("num_layers", time_seires_model.num_layers)
+            mlflow.log_param("hidden_size", time_series_model.hidden_size)
+            mlflow.log_param("num_layers", time_series_model.num_layers)
 
         elif model_type == "SARIMA":
             # Train SARIMA model
             temp_series = feature_engineering(df)
             logger.info("Training SARIMA model...")
-            time_seires_model = TimeSeriesForecast(model_type="SARIMA")
-            sarima_result = time_seires_model.train(data=temp_series.values)
+            time_series_model = TimeSeriesForecast(model_type="SARIMA")
+            sarima_result = time_series_model.train(data=temp_series.values)
             logger.success("SARIMA model trained successfully.")
 
             # Forecast 100 time steps ahead
-            forecast = time_seires_model.predict(data=temp_series.values)
+            forecast = time_series_model.predict(data=temp_series.values)
             forecast_values = forecast.loc[:, "mean"].values
             logger.info("Forecast complete.")
 
             # Logging SARIMA parameters
-            mlflow.log_param("order", time_seires_model.order)
-            mlflow.log_param("seasonal_order", time_seires_model.seasonal_order)
+            mlflow.log_param("order", time_series_model.order)
+            mlflow.log_param("seasonal_order", time_series_model.seasonal_order)
 
             # Log the SARIMA model using mlflow.pyfunc
             model_path = f"models/model_{model_type}"
             mlflow.pyfunc.log_model(
                 artifact_path=model_path,
-                python_model=time_seires_model,
+                python_model=time_series_model,
                 registered_model_name="TEMPERATURE_FORECAST",
             )
 
