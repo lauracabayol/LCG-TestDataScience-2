@@ -62,13 +62,11 @@ http://localhost:9999
 
 ```
 ├── LICENSE                        <- Open-source license if one is chosen
-├── Makefile                       <- Makefile with convenience commands like `make data` or `make train`
 ├── README.md                      <- The top-level README for developers using this project.
 ├── data
 │   └── raw/climate data           <- The original, immutable data dump.
 │
-├── docs                           <- A default mkdocs project; see www.mkdocs.org for details
-│
+├── docs                           <- Mkdocs project (deployed to GitHub)│
 ├── notebooks                      <- Jupyter notebooks.
     ├── EDA.py                     <- Notebook with exploratory data analysis
     ├── Make_predictions.py        <- Notebook to make forecasts and compare models registered at MLFlow. Only accessible if one has the MLFLow logs (not uploaded to GH)
