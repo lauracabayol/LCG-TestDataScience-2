@@ -61,23 +61,23 @@ http://localhost:9999
 ## Project Organization
 
 ```
-├── LICENSE            <- Open-source license if one is chosen
-├── Makefile           <- Makefile with convenience commands like `make data` or `make train`
-├── README.md          <- The top-level README for developers using this project.
+├── LICENSE                        <- Open-source license if one is chosen
+├── Makefile                       <- Makefile with convenience commands like `make data` or `make train`
+├── README.md                      <- The top-level README for developers using this project.
 ├── data
-│   └── raw            <- The original, immutable data dump.
+│   └── raw/climate data           <- The original, immutable data dump.
 │
-├── docs               <- A default mkdocs project; see www.mkdocs.org for details
+├── docs                           <- A default mkdocs project; see www.mkdocs.org for details
 │
-├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-│                         the creator's initials, and a short `-` delimited description, e.g.
-│                         `1.0-jqp-initial-data-exploration`.
+├── notebooks                      <- Jupyter notebooks.
+    ├── EDA.py                     <- Notebook with exploratory data analysis
+    ├── Make_predictions.py        <- Notebook to make forecasts and compare models registered at MLFlow. Only accessible if one has the MLFLow logs (not uploaded to GH)
+    ├── HTML_notebooks             <- Stable HTML version of notebooks
 │
-├── pyproject.toml     <- Project configuration file with package metadata for 
-│                         TimeSeriesAnalysis and configuration for tools like black
-││
-├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-│   └── figures        <- Generated graphics and figures to be used in reporting
+├── pyproject.toml                 <- Project configuration file with package metadata for TimeSeriesAnalysis 
+│
+├── reports                        <- Generated analysis  PDF
+│   └── LCG_TestDataScience_2.pdf  <- Generated report with LaTeX
 │
 │
 └── TimeSeriesAnalysis   <- Source code for use in this project.
@@ -86,16 +86,28 @@ http://localhost:9999
     │
     ├── config.py               <- Store useful variables and configuration
     │
-    ├── dataset.py              <- Scripts to download or generate data
+    ├── dataset.py              <- Scripts to load data
     │
     ├── features.py             <- Code to create features for modeling
+    │
+    ├── forecast_model.py       <- Main class for forecast
+    │
+    ├── lstm_model.py           <- Model definition in pytorch
     │
     ├── modeling                
     │   ├── __init__.py 
     │   ├── predict.py          <- Code to run model inference with trained models          
     │   └── train.py            <- Code to train models
     │
-    └── utils.py                <- Code to metrics and other interesting functions 
+    └── utils.py                <- Code to metrics and other interesting functions
+│
+├── app                                                <- Directory with notebook to run on a docker container
+│   └── data                                           <- Directory with data required to make predictions
+    └── ML_artifacts                                   <- Directory with model artifacts from MLFlow
+    └──Forecast_notebook.ipynb                         <- Notebook to make forecast
+    └──requirements.txt                                <- Required Python modules
+├
+├── Dockerfile                                         <-Code to launch the docker container
 ```
 
 
